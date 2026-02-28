@@ -1,0 +1,142 @@
+{
+  "pricing": {
+    "title": "Activez toutes les fonctionnalités. Nettoyez votre boîte Gmail sans limites.",
+    "subtitle": "Choisissez un plan simple. Annulez à tout moment.",
+    "monthly": "Mensuel",
+    "yearly": "Annuel (Économisez 40%)",
+    "perMonth": "/ mois",
+    "perYear": "/ an",
+    "plans": {
+      "free": {
+        "name": "Free",
+        "price": "0",
+        "description": "Pour découvrir CleanMail",
+        "features": [
+          "1 compte Gmail",
+          "3 désabonnements par mois",
+          "700 emails supprimés par mois",
+          "Regroupement par expéditeur",
+          "Actions manuelles"
+        ],
+        "cta": "Commencer gratuitement"
+      },
+      "solo": {
+        "name": "Solo",
+        "priceMonthly": "4,90",
+        "priceYearly": "35",
+        "badge": "Meilleur rapport qualité-prix",
+        "description": "Pour un usage personnel avancé",
+        "features": [
+          "1 compte Gmail",
+          "Nettoyage illimité",
+          "Désabonnement en masse",
+          "Filtres avancés",
+          "Historique des actions",
+          "Support prioritaire"
+        ],
+        "cta": "Commencer l'essai gratuit"
+      },
+      "family": {
+        "name": "Family",
+        "priceMonthly": "9,90",
+        "priceYearly": "69",
+        "description": "Pour partager en famille ou équipe",
+        "features": [
+          "5 comptes Gmail",
+          "Tout le plan Solo",
+          "Partage famille/équipe",
+          "Gestion centralisée",
+          "Support prioritaire premium",
+          "Facturation groupée"
+        ],
+        "cta": "Commencer l'essai gratuit"
+      }
+    },
+    "trust": {
+      "cancel": "Annulez ou changez de plan à tout moment.",
+      "share": "Achetez 5 comptes et partagez-les avec vos proches."
+    },
+    "footer": {
+      "privacy": "Politique de confidentialité",
+      "terms": "Conditions d'utilisation",
+      "contact": "Nous contacter",
+      "vulnerability": "Programme de divulgation de vulnérabilités"
+    }
+  },
+  "nav": {
+    "home": "Accueil",
+    "pricing": "Tarifs",
+    "login": "Connexion",
+    "about": "À propos",
+    "contact": "Contact"
+  },
+  "home": {
+    "hero": {
+      "title": "Reprenez le contrôle de votre",
+      "titleHighlight": " boîte Gmail",
+      "subtitle": "Nettoyez votre boîte mail en quelques clics. Groupez vos emails par expéditeur, désabonnez-vous facilement et supprimez en masse.",
+      "cta": "Commencer gratuitement avec Google",
+      "secure": "🔒 Sécurisé et confidentiel - Aucune donnée stockée"
+    },
+    "mockup": {
+      "title": "Expéditeurs",
+      "refreshing": "Actualisation...",
+      "preview": "⬆️ Aperçu de l'interface réelle - Vos expéditeurs apparaîtront après connexion",
+      "loading": "L'icône d'actualisation tourne en continu pendant l'analyse de vos emails",
+      "searchPlaceholder": "Rechercher par nom, email ou domaine...",
+      "unsubscribe": "Se désabonner",
+      "delete": "Supprimer",
+      "emails": "emails"
+    },
+    "howItWorks": {
+      "title": "Comment ça marche ?",
+      "step1": {
+        "title": "Connectez-vous",
+        "description": "Authentifiez-vous de façon sécurisée avec votre compte Google"
+      },
+      "step2": {
+        "title": "Analysez vos emails",
+        "description": "CleanMail scanne votre boîte Gmail et compte le nombre d'emails reçus par expéditeur automatiquement"
+      },
+      "step3": {
+        "title": "Nettoyez en 1 clic",
+        "description": "Désabonnez-vous ou supprimez en masse les emails indésirables"
+      }
+    },
+    "features": {
+      "title": "Fonctionnalités puissantes",
+      "grouping": {
+        "title": "Groupement intelligent",
+        "description": "Visualisez tous vos expéditeurs groupés avec le nombre exact d'emails reçus. Identifiez rapidement qui encombre votre boîte."
+      },
+      "search": {
+        "title": "Recherche instantanée",
+        "description": "Trouvez rapidement un expéditeur spécifique en recherchant par nom, email ou domaine. Filtrage en temps réel."
+      },
+      "unsubscribe": {
+        "title": "Désabonnement automatique",
+        "description": "Détectez automatiquement les liens de désabonnement dans les headers des emails et désabonnez-vous en un clic."
+      },
+      "massDelete": {
+        "title": "Suppression en masse",
+        "description": "Mettez à la corbeille tous les emails d'un expéditeur en un clic. Jusqu'à 500 emails traités simultanément."
+      },
+      "security": {
+        "title": "Sécurité maximale",
+        "description": "Vos tokens sont chiffrés avec iron-session. Aucune donnée n'est stockée. Tout se passe côté serveur de façon sécurisée."
+      }
+    },
+    "cta": {
+      "title": "Prêt à nettoyer votre boîte Gmail ?",
+      "subtitle": "Rejoignez des milliers d'utilisateurs qui ont déjà repris le contrôle",
+      "button": "Commencer maintenant"
+    },
+    "footer": {
+      "tagline": "Un outil simple pour gérer vos emails Gmail.",
+      "secure": "🔒 Vos données sont sécurisées et jamais stockées"
+    }
+  },
+  "common": {
+    "language": "Langue"
+  }
+}

@@ -1,0 +1,76 @@
+====================================
+     CLEANMAIL - À REVOIR PLUS TARD
+====================================
+
+Date de création : 27 février 2026
+
+Liste des sujets mis de côté temporairement (non-prioritaires ou déjà fonctionnels).
+
+------------------------------------
+1. OAUTH / SCOPES
+------------------------------------
+Contexte:
+- whoami OK : l'endpoint /api/auth/whoami répond correctement
+- check-scopes OK : l'endpoint /api/auth/check-scopes valide les permissions Gmail
+- Les erreurs 403 historiques semblent réglées
+
+Statut: Fonctionnel ✓
+
+Action: Revoir uniquement si des erreurs 403/scopes reviennent en production.
+
+
+------------------------------------
+2. FAVICONS 404 EN CONSOLE
+------------------------------------
+Problème:
+- Quelques 404 en console pour des favicons/icônes manquantes
+- Webpack cache warnings (pack.gz rename failures)
+
+Impact: Aucun impact utilisateur, juste pollution des logs
+
+Statut: Cosmétique
+
+Action: Optimiser plus tard (cache Next.js + domains failed).
+
+
+------------------------------------
+3. LOCKFILE WARNING
+------------------------------------
+Warning:
+- Next.js détecte 2 package-lock.json (parent + mailclean-web)
+- Suggestion: supprimer /Users/nassim/Documents/MailClean/package-lock.json
+  ou configurer outputFileTracingRoot dans next.config.js
+
+Statut: Non-bloquant
+
+Action: Nettoyer quand le projet sera stabilisé.
+
+
+------------------------------------
+4. RATE LIMITING GMAIL (RÉSOLU)
+------------------------------------
+Contexte:
+- Quota Gmail API dépassé (15 000 req/min)
+- Solution implémentée : Rate limiter (200 req/sec max) + retry exponential backoff
+
+Statut: Résolu ✓
+
+Action: Monitorer en production, ajuster si nécessaire.
+
+
+------------------------------------
+5. TYPESCRIPT ERRORS (PRÉ-EXISTANTS)
+------------------------------------
+Liste d'erreurs TypeScript dans:
+- app/api/activity/*.ts
+- app/api/bulk/*.ts
+- SessionData type issues
+
+Statut: Pré-existants, non-bloquants
+
+Action: Refactor global des types quand temps disponible.
+
+
+====================================
+FIN DU FICHIER
+====================================

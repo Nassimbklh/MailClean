@@ -1,0 +1,345 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Utilisateurs
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  googleId  String?  @unique
+  name      String?
+  picture   String?
+  plan      String   @default("free") // "free", "solo", "family", "pro"
+  role      String   @default("user") // "user", "admin"
+  isActive  Boolean  @default(true) // false = compte suspendu
+  lastLogin DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Emails automatiques et marketing
+  firstLoginAt            DateTime? // Date de première connexion
+  welcomeEmailSentAt      DateTime? // Date d'envoi du welcome email
+  marketingOptIn          Boolean   @default(false) // Consentement marketing (RGPD)
+  marketingOptInAt        DateTime? // Date du consentement
+  marketingOptInSource    String?   // Source: "signup", "preferences", etc.
+  marketingUnsubscribedAt DateTime? // Date de désinscription marketing
+  marketingNudgeSentAt    DateTime? // Date d'envoi de l'email de relance
+
+  // Relations
+  scanState       ScanState?
+  senderStats     SenderStat[]
+  activityLogs    ActivityLog[]
+  userMetrics     UserMetrics?
+  subscription    Subscription?
+  userActions     UserAction[]
+  invoices        Invoice[]
+  ownedTeam       Team?         // Équipe dont l'utilisateur est propriétaire
+  teamMemberships TeamMember[]  // Équipes dont l'utilisateur est membre
+}
+
+// État du scan
+model ScanState {
+  id                       String    @id @default(uuid())
+  userId                   String    @unique
+  nextPageToken            String? // Token pour continuer le scan
+  scannedCount             Int       @default(0) // Nombre total d'emails scannés
+  senderCount              Int       @default(0) // Nombre d'expéditeurs trouvés
+  status                   String    @default("INCOMPLETE") // "INCOMPLETE", "COMPLETE", "SCANNING", "PAUSED_RATE_LIMIT"
+  hasShownFirstScanToast   Boolean   @default(false) // Popup verte affichée une fois
+  lastScanAt               DateTime? // Date du dernier scan
+  resumeAfter              DateTime? // Date de reprise automatique après pause rate limit
+  updatedAt                DateTime  @updatedAt
+  createdAt                DateTime  @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// Statistiques par expéditeur
+model SenderStat {
+  id                    String    @id @default(uuid())
+  userId                String
+  senderKey             String // email de l'expéditeur (clé unique par user)
+  name                  String?
+  email                 String
+  domain                String?
+  count                 Int       @default(0) // Nombre total d'emails de cet expéditeur
+  emailsCount           Int       @default(0) // Nombre d'emails restants (après suppression)
+  lastDate              DateTime?
+  unsubAvailable        Boolean   @default(false) // Désabonnement détecté
+  unsubUrl              String?
+  unsubMailto           String?
+  unsubDetectionLevel   String?   // "header" | "body_link" | "body_mailto" | "none"
+  unsubLinkOpened       Boolean   @default(false) // Si le lien a été ouvert (niveau 2)
+  unsubLinkOpenedAt     DateTime?
+  unsubLastCheckAt      DateTime? // Date de la dernière vérification
+  cleanedCount          Int       @default(0) // Nombre d'emails nettoyés pour cet expéditeur
+  unsubscribed          Boolean   @default(false) // Si l'utilisateur s'est désabonné
+  unsubscribedAt        DateTime? // Date du désabonnement
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, senderKey])
+  @@index([userId])
+}
+
+// Historique des actions (30 dernières)
+model ActivityLog {
+  id           String   @id @default(uuid())
+  userId       String
+  actionType   String // "trash", "archive", "unsubscribe", "mark_read"
+  senderKey    String // Email de l'expéditeur
+  senderName   String?
+  count        Int // Nombre d'emails affectés
+  undoable     Boolean  @default(false) // Si l'action peut être annulée
+  undone       Boolean  @default(false) // Si l'action a été annulée
+  undoPayload  String? // JSON avec les infos pour undo (messageIds, etc.)
+  timestamp    DateTime @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, timestamp])
+}
+
+// Métriques globales par utilisateur
+model UserMetrics {
+  id                 String   @id @default(uuid())
+  userId             String   @unique
+  totalDeleted       Int      @default(0) // Total emails supprimés/déplacés en corbeille
+  totalUnsubscribes  Int      @default(0) // Total désabonnements
+  totalArchived      Int      @default(0) // Total emails archivés
+  mailboxTotalCount  Int?     // Nombre total d'emails dans la boîte (snapshot)
+  lastMailboxSync    DateTime? // Dernière synchronisation du total
+  updatedAt          DateTime @updatedAt
+  createdAt          DateTime @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// Abonnements utilisateurs
+model Subscription {
+  id                     String    @id @default(uuid())
+  userId                 String    @unique
+  stripeCustomerId       String?   @unique
+  stripeSubscriptionId   String?   @unique
+  stripePriceId          String?
+  status                 String    @default("inactive") // "active", "inactive", "cancelled", "past_due"
+  planId                 String    @default("free") // "free", "solo", "family", "pro"
+  billing                String?   // "monthly", "yearly"
+  quantity               Int?      @default(1) // Nombre de comptes (utilisé pour le plan Pro)
+  currentPeriodStart     DateTime?
+  currentPeriodEnd       DateTime?
+  cancelAtPeriodEnd      Boolean   @default(false)
+  canceledAt             DateTime? // Date d'annulation
+  purchaseEmailSentAt    DateTime? // Date d'envoi de l'email de confirmation d'achat
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+
+  // Relations
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  invoices Invoice[]
+
+  @@index([userId])
+  @@index([stripeCustomerId])
+  @@index([stripeSubscriptionId])
+  @@index([status])
+}
+
+// Actions utilisateur (traçabilité complète)
+model UserAction {
+  id          String   @id @default(uuid())
+  userId      String
+  actionType  String   // "delete", "unsubscribe", "archive", "trash", "bulk_delete", etc.
+  targetType  String?  // "sender", "email", "bulk"
+  targetId    String?  // Email de l'expéditeur ou ID du message
+  count       Int      @default(1) // Nombre d'items affectés
+  metadata    String?  // JSON avec détails supplémentaires
+  createdAt   DateTime @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([actionType])
+}
+
+// Logs d'administration
+model AdminLog {
+  id          String   @id @default(uuid())
+  adminEmail  String   // Email de l'admin qui a fait l'action
+  action      String   // "suspend_user", "activate_user", "delete_user", "change_plan", etc.
+  targetType  String   // "user", "subscription", "system"
+  targetId    String?  // ID de la cible (userId, subscriptionId, etc.)
+  details     String?  // JSON avec les détails de l'action
+  ipAddress   String?
+  userAgent   String?
+  timestamp   DateTime @default(now())
+
+  @@index([adminEmail, timestamp])
+  @@index([targetType, targetId])
+  @@index([timestamp])
+}
+
+// Codes promo
+model PromoCode {
+  id                     String    @id @default(uuid())
+  code                   String    @unique // Code saisi par l'utilisateur (ex: "BIENVENUE10")
+  discountPercent        Int       // Pourcentage de réduction (ex: 10 pour -10%)
+  maxUses                Int       @default(1) // Nombre max d'utilisations (1 par défaut)
+  currentUses            Int       @default(0) // Nombre d'utilisations actuelles
+  expiresAt              DateTime  // Date d'expiration
+  allowedBillingPeriod   String    @default("MONTHLY") // "MONTHLY" ou "YEARLY" ou "ALL"
+  isActive               Boolean   @default(true) // Actif ou désactivé
+  createdBy              String?   // Email de l'admin créateur
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+
+  // Relations
+  redemptions PromoCodeRedemption[]
+
+  @@index([code])
+  @@index([expiresAt])
+  @@index([isActive])
+}
+
+// Utilisation des codes promo (traçabilité)
+model PromoCodeRedemption {
+  id           String    @id @default(uuid())
+  promoCodeId  String
+  userId       String
+  userEmail    String
+  planId       String    // "solo", "family", "pro"
+  billing      String    // "monthly" ou "yearly"
+  discountApplied Int    // Montant de la réduction appliquée en %
+  redeemedAt   DateTime  @default(now())
+
+  // Relations
+  promoCode PromoCode @relation(fields: [promoCodeId], references: [id], onDelete: Cascade)
+
+  @@index([promoCodeId])
+  @@index([userId])
+  @@index([userEmail])
+}
+
+// Teams (Organisation) - Pour les plans Family et Pro
+model Team {
+  id           String   @id @default(uuid())
+  ownerUserId  String   @unique // Utilisateur propriétaire de l'équipe
+  name         String?  // Nom de l'équipe (optionnel)
+  plan         String   // "family" ou "pro"
+  seatsTotal   Int      // Nombre total de places (5 pour Family, N pour Pro)
+  seatsUsed    Int      @default(1) // Nombre de places utilisées (1 = owner)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  owner        User          @relation(fields: [ownerUserId], references: [id], onDelete: Cascade)
+  members      TeamMember[]
+  inviteCodes  InviteCode[]
+
+  @@index([ownerUserId])
+  @@index([plan])
+}
+
+// Membres d'une équipe
+model TeamMember {
+  id        String   @id @default(uuid())
+  teamId    String
+  userId    String
+  role      String   @default("member") // "owner" ou "member"
+  joinedAt  DateTime @default(now())
+
+  // Relations
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, userId]) // Un utilisateur ne peut être dans une équipe qu'une seule fois
+  @@index([teamId])
+  @@index([userId])
+}
+
+// Codes d'invitation (10 caractères A-Z0-9)
+model InviteCode {
+  id          String   @id @default(uuid())
+  teamId      String
+  code        String   @unique // Code de 10 caractères (ex: 7KQ9F2X1AB)
+  maxUses     Int      // Nombre max d'utilisations = seatsTotal - seatsUsed
+  usedCount   Int      @default(0)
+  expiresAt   DateTime // Date d'expiration (ex: +7 jours)
+  createdAt   DateTime @default(now())
+  disabledAt  DateTime? // Si désactivé manuellement
+
+  // Relations
+  team        Team                  @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  redemptions InviteCodeRedemption[]
+
+  @@index([code])
+  @@index([teamId])
+  @@index([expiresAt])
+}
+
+// Utilisation des codes d'invitation (traçabilité)
+model InviteCodeRedemption {
+  id           String    @id @default(uuid())
+  inviteCodeId String
+  userId       String
+  userEmail    String
+  redeemedAt   DateTime  @default(now())
+  ipAddress    String?
+  userAgent    String?
+
+  // Relations
+  inviteCode InviteCode @relation(fields: [inviteCodeId], references: [id], onDelete: Cascade)
+
+  @@index([inviteCodeId])
+  @@index([userId])
+  @@index([userEmail])
+}
+
+// Factures / Reçus
+model Invoice {
+  id                   String   @id @default(uuid())
+  userId               String
+  subscriptionId       String
+  invoiceNumber        String   @unique // Numéro de facture unique (ex: INV-2024-001234)
+  stripeInvoiceId      String?  @unique // ID de la facture Stripe (si applicable)
+  status               String   @default("paid") // "paid", "pending", "failed"
+  planId               String   // "solo", "family", "pro"
+  planName             String   // Nom du plan (ex: "Solo Plan")
+  billing              String   // "monthly", "yearly"
+  amount               Int      // Montant en centimes (ex: 999 = 9.99€)
+  currency             String   @default("eur") // "eur", "usd"
+  periodStart          DateTime // Début de la période facturée
+  periodEnd            DateTime // Fin de la période facturée
+  paidAt               DateTime? // Date de paiement
+  transactionId        String?  // ID de transaction Stripe
+  paymentMethod        String?  // "card", "sepa", etc.
+  customerEmail        String   // Email du client
+  customerName         String?  // Nom du client
+  pdfUrl               String?  // URL du PDF généré (si stocké)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  // Relations
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subscription Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([subscriptionId])
+  @@index([invoiceNumber])
+  @@index([stripeInvoiceId])
+  @@index([createdAt])
+}

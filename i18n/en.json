@@ -1,0 +1,142 @@
+{
+  "pricing": {
+    "title": "Turn on all features. Clean your Gmail without limits.",
+    "subtitle": "Simple plans. Cancel anytime.",
+    "monthly": "Monthly",
+    "yearly": "Yearly (Save 40%)",
+    "perMonth": "/ month",
+    "perYear": "/ year",
+    "plans": {
+      "free": {
+        "name": "Free",
+        "price": "0",
+        "description": "To discover CleanMail",
+        "features": [
+          "1 Gmail account",
+          "3 unsubscribes per month",
+          "700 emails deleted per month",
+          "Group by sender",
+          "Manual actions"
+        ],
+        "cta": "Start for free"
+      },
+      "solo": {
+        "name": "Solo",
+        "priceMonthly": "4.90",
+        "priceYearly": "35",
+        "badge": "Best value",
+        "description": "For advanced personal use",
+        "features": [
+          "1 Gmail account",
+          "Unlimited cleaning",
+          "Mass unsubscribe",
+          "Advanced filters",
+          "Action history",
+          "Priority support"
+        ],
+        "cta": "Start free trial"
+      },
+      "family": {
+        "name": "Family",
+        "priceMonthly": "9.90",
+        "priceYearly": "69",
+        "description": "For family or team sharing",
+        "features": [
+          "5 Gmail accounts",
+          "Everything in Solo",
+          "Family/team sharing",
+          "Centralized management",
+          "Premium priority support",
+          "Group billing"
+        ],
+        "cta": "Start free trial"
+      }
+    },
+    "trust": {
+      "cancel": "Cancel or change plans at anytime.",
+      "share": "Buy 5 accounts and share them with friends and family."
+    },
+    "footer": {
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service",
+      "contact": "Contact us",
+      "vulnerability": "Vulnerability Disclosure Program"
+    }
+  },
+  "nav": {
+    "home": "Home",
+    "pricing": "Pricing",
+    "login": "Login",
+    "about": "About",
+    "contact": "Contact"
+  },
+  "home": {
+    "hero": {
+      "title": "Take back control of your",
+      "titleHighlight": " Gmail inbox",
+      "subtitle": "Clean your mailbox in a few clicks. Group your emails by sender, unsubscribe easily and delete in bulk.",
+      "cta": "Start free with Google",
+      "secure": "🔒 Secure and confidential - No data stored"
+    },
+    "mockup": {
+      "title": "Senders",
+      "refreshing": "Refreshing...",
+      "preview": "⬆️ Preview of the real interface - Your senders will appear after login",
+      "loading": "The refresh icon spins continuously while analyzing your emails",
+      "searchPlaceholder": "Search by name, email or domain...",
+      "unsubscribe": "Unsubscribe",
+      "delete": "Delete",
+      "emails": "emails"
+    },
+    "howItWorks": {
+      "title": "How it works?",
+      "step1": {
+        "title": "Connect",
+        "description": "Authenticate securely with your Google account"
+      },
+      "step2": {
+        "title": "Analyze your emails",
+        "description": "CleanMail scans your Gmail inbox and counts the number of emails received per sender automatically"
+      },
+      "step3": {
+        "title": "Clean in 1 click",
+        "description": "Unsubscribe or bulk delete unwanted emails"
+      }
+    },
+    "features": {
+      "title": "Powerful features",
+      "grouping": {
+        "title": "Smart grouping",
+        "description": "View all your senders grouped with the exact number of emails received. Quickly identify who's cluttering your inbox."
+      },
+      "search": {
+        "title": "Instant search",
+        "description": "Quickly find a specific sender by searching by name, email or domain. Real-time filtering."
+      },
+      "unsubscribe": {
+        "title": "Automatic unsubscribe",
+        "description": "Automatically detect unsubscribe links in email headers and unsubscribe with one click."
+      },
+      "massDelete": {
+        "title": "Bulk delete",
+        "description": "Trash all emails from a sender with one click. Up to 500 emails processed simultaneously."
+      },
+      "security": {
+        "title": "Maximum security",
+        "description": "Your tokens are encrypted with iron-session. No data is stored. Everything happens server-side securely."
+      }
+    },
+    "cta": {
+      "title": "Ready to clean your Gmail inbox?",
+      "subtitle": "Join thousands of users who have already taken back control",
+      "button": "Start now"
+    },
+    "footer": {
+      "tagline": "A simple tool to manage your Gmail emails.",
+      "secure": "🔒 Your data is secure and never stored"
+    }
+  },
+  "common": {
+    "language": "Language"
+  }
+}
