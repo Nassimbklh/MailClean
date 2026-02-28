@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import PublicNavbar from "@/components/PublicNavbar";
 
-export default function PricingPage() {
+function PricingContent() {
   const searchParams = useSearchParams();
   const [isYearly, setIsYearly] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
@@ -429,5 +429,13 @@ export default function PricingPage() {
         </div>
       </footer>
     </div>
+  );
+}
+
+export default function PricingPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Chargement...</div>}>
+      <PricingContent />
+    </Suspense>
   );
 }
