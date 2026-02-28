@@ -1,14 +1,14 @@
 # 🚀 Déployer MailClean sur Vercel
 
-## ⚠️ Note importante sur SQLite
+## ✅ Base de données PostgreSQL
 
-**SQLite n'est PAS recommandé pour Vercel** car le système de fichiers est éphémère (les données seront perdues à chaque déploiement).
+Le projet utilise **PostgreSQL** comme base de données, compatible avec l'environnement serverless de Vercel.
 
-### Solutions pour la production :
+### Solutions PostgreSQL pour production :
 
-1. **PostgreSQL** (recommandé) - Utiliser Vercel Postgres ou Supabase
-2. **MySQL** - Utiliser PlanetScale ou Vercel MySQL
-3. **MongoDB** - Utiliser MongoDB Atlas
+1. **Neon** (recommandé) - PostgreSQL serverless avec intégration Vercel native
+2. **Vercel Postgres** - PostgreSQL managé directement dans Vercel
+3. **Supabase** - PostgreSQL avec API REST et temps réel
 
 ---
 
@@ -30,11 +30,12 @@ Dans Vercel, aller dans **"Environment Variables"** et ajouter :
 #### **Variables obligatoires :**
 
 ```
-DATABASE_URL=file:./dev.db
+DATABASE_URL=postgresql://user:password@host:5432/database
 ```
-⚠️ **Pour production, remplacer par une vraie base de données** :
-- PostgreSQL : `postgresql://user:password@host:5432/database`
-- MySQL : `mysql://user:password@host:3306/database`
+💡 **Exemple avec Neon** :
+```
+DATABASE_URL=postgresql://user:password@ep-example-123456.us-east-1.aws.neon.tech/mailclean?sslmode=require
+```
 
 ```
 GOOGLE_CLIENT_ID=your_google_client_id
@@ -97,35 +98,41 @@ Une fois déployé, mettre à jour Google Cloud Console :
 
 ---
 
-## 📊 Migration vers PostgreSQL (recommandé pour production)
+## 📊 Configuration PostgreSQL
 
-### Option 1 : Vercel Postgres
+### Option 1 : Neon (Recommandé - intégration native Vercel)
+
+1. Dans Vercel, aller dans votre projet
+2. Onglet **Storage** → **Create Database**
+3. Choisir **Neon Postgres**
+4. Le `DATABASE_URL` sera automatiquement ajouté aux variables d'environnement
+
+### Option 2 : Vercel Postgres
 
 1. Dans Vercel, aller dans **Storage** → **Create Database**
 2. Choisir **Postgres**
 3. Créer la base de données
-4. Copier le `DATABASE_URL` fourni par Vercel
-5. Mettre à jour dans **Environment Variables**
+4. Le `DATABASE_URL` sera automatiquement configuré
 
-### Option 2 : Supabase
+### Option 3 : Supabase
 
 1. Créer un compte sur https://supabase.com
 2. Créer un nouveau projet
 3. Aller dans **Settings** → **Database**
 4. Copier le **Connection String** (mode Session)
 5. Format : `postgresql://postgres:[password]@db.[project].supabase.co:5432/postgres`
+6. Ajouter manuellement dans **Environment Variables** sur Vercel
 
-### Migration du schéma :
+### Synchronisation du schéma :
+
+Après avoir connecté la base de données :
 
 ```bash
-# Localement, mettre à jour le DATABASE_URL
-DATABASE_URL="postgresql://..."
-
-# Générer la migration
-npx prisma migrate dev --name init
-
-# Pousser le schéma
+# Méthode 1 : Push direct du schéma (recommandé pour la première fois)
 npx prisma db push
+
+# Méthode 2 : Créer une migration (pour versioning)
+npx prisma migrate deploy
 ```
 
 ---
@@ -152,18 +159,18 @@ npx prisma db push
 ### Erreur OAuth "redirect_uri_mismatch"
 → Vérifier que l'URL de callback est bien ajoutée dans Google Cloud Console
 
-### Les données disparaissent après chaque déploiement
-→ SQLite n'est pas persistant sur Vercel, migrer vers PostgreSQL
+### Erreur "Table does not exist"
+→ Exécuter `npx prisma db push` pour synchroniser le schéma avec la base de données
 
 ---
 
 ## 🎉 Prochaines étapes
 
 1. Configurer un domaine personnalisé (au lieu de `.vercel.app`)
-2. Migrer vers PostgreSQL pour la production
-3. Configurer Stripe en mode production
-4. Ajouter un monitoring (Vercel Analytics)
-5. Configurer les webhooks Stripe
+2. Configurer Stripe en mode production
+3. Ajouter un monitoring (Vercel Analytics)
+4. Configurer les webhooks Stripe
+5. Soumettre l'app Google OAuth pour vérification (voir GOOGLE_OAUTH_PRODUCTION.md)
 
 ---
 

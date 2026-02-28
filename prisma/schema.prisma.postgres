@@ -1,0 +1,15 @@
+// This is your Prisma schema file for PostgreSQL
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Le reste du schéma reste identique...
+// Copiez tout le contenu de votre schema.prisma actuel ici
+// en changeant seulement le provider ci-dessus

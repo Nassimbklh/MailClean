@@ -17,7 +17,7 @@ A powerful Gmail inbox management tool built with Next.js 15, helping users clea
 
 - **Framework**: Next.js 15 (App Router)
 - **Language**: TypeScript
-- **Database**: SQLite with Prisma ORM
+- **Database**: PostgreSQL with Prisma ORM
 - **Authentication**: Google OAuth 2.0
 - **Payments**: Stripe
 - **Email**: Resend
